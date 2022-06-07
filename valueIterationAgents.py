@@ -9,6 +9,7 @@
 import mdp, util
 
 from learningAgents import ValueEstimationAgent
+import numpy as np
 
 class ValueIterationAgent(ValueEstimationAgent):
   """
@@ -35,14 +36,27 @@ class ValueIterationAgent(ValueEstimationAgent):
     self.discount = discount
     self.iterations = iterations
     self.values = util.Counter() # A Counter is a dict with default 0
-     
-    "*** YOUR CODE HERE ***"
-    
+    for s in self.mdp.getStates():
+      self.values[s] = 0.0
+    for i in range(iterations):
+      self.run_iteration()
+
+
+  def run_iteration(self):
+    term_value = util.Counter()
+    for state in self.mdp.getStates():
+      if self.mdp.isTerminal(state):
+        continue
+      term_value[state] = max([self.getQValue(state, a) for a in self.mdp.getPossibleActions(state)])
+    self.values = term_value
+
+
   def getValue(self, state):
     """
       Return the value of the state (computed in __init__).
     """
     return self.values[state]
+
 
   def getQValue(self, state, action):
     """
@@ -52,8 +66,15 @@ class ValueIterationAgent(ValueEstimationAgent):
       necessarily create this quantity and you may have
       to derive it on the fly.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    result = 0.0
+    transitions = np.array(self.mdp.getTransitionStatesAndProbs(state, action))
+    for t in transitions:
+      s_tag = t[0]
+      value = t[1]
+      result += float(value) * \
+                (self.mdp.getReward(state, action, s_tag) + self.discount * self.values[s_tag])
+    return result
+
 
   def getPolicy(self, state):
     """
@@ -63,8 +84,18 @@ class ValueIterationAgent(ValueEstimationAgent):
       there are no legal actions, which is the case at the
       terminal state, you should return None.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    actions = self.mdp.getPossibleActions(state)
+    if len(actions) == 0:
+      return None
+    best_action = None
+    best_action_val = -np.inf
+    for action in actions:
+      term = self.getQValue(state, action)
+      if term > best_action_val:
+        best_action_val = term
+        best_action = action
+    return best_action
+
 
   def getAction(self, state):
     "Returns the policy at the state (no exploration)."
