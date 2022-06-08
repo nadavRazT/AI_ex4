@@ -11,7 +11,7 @@ from graphicsUtils import *
 
 class GraphicsGridworldDisplay:
   
-  def __init__(self, gridworld, size=120, speed=1.0):
+  def __init__(self, gridworld, size=60, speed=1.0):
     self.gridworld = gridworld
     self.size = size
     self.speed = speed
