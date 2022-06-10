@@ -64,7 +64,7 @@ GRID_SIZE = -1
 GRID_HEIGHT = -1
 MARGIN = -1
 
-def setup(gridworld, title = "Gridworld Display", size = 120):
+def setup(gridworld, title = "Gridworld Display", size = 100):
   global GRID_SIZE, MARGIN, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_HEIGHT
   grid = gridworld.grid
   WINDOW_SIZE = size
